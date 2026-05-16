@@ -15,7 +15,8 @@ class DistributionInfolist
             ->components([
                 Section::make('Ringkasan Distribusi')
                     ->description('Perpindahan bahan dari pusat ke cabang')
-                    ->columns(3)
+                    ->columnSpanFull()
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('distribution_date')
                             ->label('Tanggal')

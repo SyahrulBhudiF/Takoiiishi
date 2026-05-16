@@ -14,7 +14,8 @@ class StockInfolist
         return $schema
             ->components([
                 Section::make('Ringkasan Stok')
-                    ->columns(3)
+                    ->columnSpanFull()
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('outlet.name')
                             ->label('Outlet')

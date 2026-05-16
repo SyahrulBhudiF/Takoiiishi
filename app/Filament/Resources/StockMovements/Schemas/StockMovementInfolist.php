@@ -14,7 +14,8 @@ class StockMovementInfolist
         return $schema
             ->components([
                 Section::make('Ringkasan Mutasi')
-                    ->columns(3)
+                    ->columnSpanFull()
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('outlet.name')
                             ->label('Outlet')

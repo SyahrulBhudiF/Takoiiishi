@@ -14,7 +14,8 @@ class SaleInfolist
         return $schema
             ->components([
                 Section::make('Ringkasan Penjualan')
-                    ->columns(3)
+                    ->columnSpanFull()
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('sale_date')
                             ->label('Tanggal')

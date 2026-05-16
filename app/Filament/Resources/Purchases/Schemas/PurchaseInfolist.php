@@ -14,7 +14,8 @@ class PurchaseInfolist
         return $schema
             ->components([
                 Section::make('Ringkasan Pembelian')
-                    ->columns(3)
+                    ->columnSpanFull()
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('purchase_date')
                             ->label('Tanggal')
