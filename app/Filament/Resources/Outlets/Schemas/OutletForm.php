@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Outlets\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
@@ -16,7 +17,11 @@ class OutletForm
                     ->required(),
                 Textarea::make('address')
                     ->columnSpanFull(),
-                TextInput::make('type')
+                Select::make('type')
+                    ->options([
+                        'pusat' => 'Pusat',
+                        'cabang' => 'Cabang',
+                    ])
                     ->required(),
             ]);
     }

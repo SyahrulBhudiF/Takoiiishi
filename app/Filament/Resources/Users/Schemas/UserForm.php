@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Enums\UserRole;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -23,10 +25,16 @@ class UserForm
                 DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
                     ->password()
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn (?string $state): bool => filled($state)),
+                Select::make('role')
+                    ->options(UserRole::options())
+                    ->live()
                     ->required(),
-                TextInput::make('role')
-                    ->required(),
-                TextInput::make('outlet_id'),
+                Select::make('outlet_id')
+                    ->relationship('outlet', 'name')
+                    ->visible(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->isBranchScoped() ?? false)
+                    ->required(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->isBranchScoped() ?? false),
             ]);
     }
 }

@@ -28,8 +28,10 @@ class UsersTable
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('role')
+                    ->badge()
                     ->searchable(),
-                TextColumn::make('outlet_id')
+                TextColumn::make('outlet.name')
+                    ->label('Outlet')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
