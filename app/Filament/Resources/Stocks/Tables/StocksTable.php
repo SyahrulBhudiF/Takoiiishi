@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Stocks\Tables;
 
 use App\Filament\Exports\StockExporter;
+use App\Support\DateFormat;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
@@ -44,12 +45,12 @@ class StocksTable
                     ->falseColor('success'),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

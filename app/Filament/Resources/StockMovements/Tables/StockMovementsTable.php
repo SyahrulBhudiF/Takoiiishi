@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\StockMovements\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use App\Support\DateFormat;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -36,11 +34,11 @@ class StockMovementsTable
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Tanggal')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable(),
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Distributions\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use App\Support\DateFormat;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,7 +18,7 @@ class DistributionsTable
             ->columns([
                 TextColumn::make('distribution_date')
                     ->label('Tanggal')
-                    ->date()
+                    ->date(DateFormat::DATE)
                     ->sortable(),
                 TextColumn::make('fromOutlet.name')
                     ->label('Dari')
@@ -30,12 +31,12 @@ class DistributionsTable
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

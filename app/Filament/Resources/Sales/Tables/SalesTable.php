@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Sales\Tables;
 
 use App\Filament\Exports\SaleExporter;
+use App\Support\DateFormat;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
@@ -21,7 +22,7 @@ class SalesTable
             ->columns([
                 TextColumn::make('sale_date')
                     ->label('Tanggal')
-                    ->date()
+                    ->date(DateFormat::DATE)
                     ->sortable(),
                 TextColumn::make('outlet.name')
                     ->label('Outlet')
@@ -35,12 +36,12 @@ class SalesTable
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
-                    ->dateTime()
+                    ->dateTime(DateFormat::DATE_TIME)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
