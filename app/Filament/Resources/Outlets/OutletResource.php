@@ -22,7 +22,9 @@ class OutletResource extends Resource
 
     protected static ?string $navigationLabel = 'Cabang / Outlet';
 
-    protected static ?string $modelLabel = 'Outlet';
+    protected static ?string $modelLabel = 'Cabang / Outlet';
+
+    protected static ?string $pluralModelLabel = 'Cabang / Outlet';
 
     public static function form(Schema $schema): Schema
     {

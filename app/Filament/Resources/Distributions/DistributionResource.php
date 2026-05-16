@@ -24,6 +24,10 @@ class DistributionResource extends Resource
 
     protected static ?string $navigationLabel = 'Distribusi Bahan';
 
+    protected static ?string $modelLabel = 'Distribusi Bahan';
+
+    protected static ?string $pluralModelLabel = 'Distribusi Bahan';
+
     public static function form(Schema $schema): Schema
     {
         return DistributionForm::configure($schema);

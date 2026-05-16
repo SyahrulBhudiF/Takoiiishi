@@ -24,6 +24,10 @@ class PurchaseResource extends Resource
 
     protected static ?string $navigationLabel = 'Pembelian Bahan';
 
+    protected static ?string $modelLabel = 'Pembelian Bahan';
+
+    protected static ?string $pluralModelLabel = 'Pembelian Bahan';
+
     public static function form(Schema $schema): Schema
     {
         return PurchaseForm::configure($schema);

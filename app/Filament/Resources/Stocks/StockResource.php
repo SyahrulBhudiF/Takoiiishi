@@ -26,6 +26,10 @@ class StockResource extends Resource
 
     protected static ?string $navigationLabel = 'Monitoring Stok';
 
+    protected static ?string $modelLabel = 'Monitoring Stok';
+
+    protected static ?string $pluralModelLabel = 'Monitoring Stok';
+
     public static function form(Schema $schema): Schema
     {
         return StockForm::configure($schema);

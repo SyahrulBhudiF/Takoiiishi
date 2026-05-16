@@ -26,6 +26,10 @@ class SaleResource extends Resource
 
     protected static ?string $navigationLabel = 'Penjualan Harian';
 
+    protected static ?string $modelLabel = 'Penjualan Harian';
+
+    protected static ?string $pluralModelLabel = 'Penjualan Harian';
+
     public static function form(Schema $schema): Schema
     {
         return SaleForm::configure($schema);

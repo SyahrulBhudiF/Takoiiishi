@@ -26,6 +26,10 @@ class StockMovementResource extends Resource
 
     protected static ?string $navigationLabel = 'Mutasi Stok';
 
+    protected static ?string $modelLabel = 'Mutasi Stok';
+
+    protected static ?string $pluralModelLabel = 'Mutasi Stok';
+
     public static function form(Schema $schema): Schema
     {
         return StockMovementForm::configure($schema);

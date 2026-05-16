@@ -24,6 +24,8 @@ class IngredientResource extends Resource
 
     protected static ?string $modelLabel = 'Bahan Baku';
 
+    protected static ?string $pluralModelLabel = 'Bahan Baku';
+
     public static function form(Schema $schema): Schema
     {
         return IngredientForm::configure($schema);
