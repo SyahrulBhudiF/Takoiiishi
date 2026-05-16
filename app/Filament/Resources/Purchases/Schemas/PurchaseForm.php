@@ -6,6 +6,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class PurchaseForm
@@ -14,10 +15,25 @@ class PurchaseForm
     {
         return $schema
             ->components([
-                DatePicker::make('purchase_date')
-                    ->label('Tanggal Pembelian')
-                    ->default(now())
-                    ->required(),
+                Section::make()
+                    ->schema([
+                        DatePicker::make('purchase_date')
+                            ->label('Tanggal Pembelian')
+                            ->default(now())
+                            ->required(),
+
+                        TextInput::make('total')
+                            ->label('Total')
+                            ->numeric()
+                            ->readOnly()
+                            ->default(0),
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'lg' => 2,
+                    ])
+                    ->columnSpanFull(),
+
                 Repeater::make('items')
                     ->label('Item Pembelian')
                     ->relationship()
@@ -44,14 +60,14 @@ class PurchaseForm
                             ->readOnly()
                             ->default(0),
                     ])
-                    ->columns(4)
+                    ->columns([
+                        'default' => 1,
+                        'md' => 2,
+                        'xl' => 4,
+                    ])
+                    ->columnSpanFull()
                     ->minItems(1)
                     ->required(),
-                TextInput::make('total')
-                    ->label('Total')
-                    ->numeric()
-                    ->readOnly()
-                    ->default(0),
             ]);
     }
 }

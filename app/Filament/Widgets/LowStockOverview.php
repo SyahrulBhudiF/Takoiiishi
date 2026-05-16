@@ -4,13 +4,12 @@ namespace App\Filament\Widgets;
 
 use App\Enums\UserRole;
 use App\Models\Stock;
-use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class LowStockOverview extends StatsOverviewWidget
 {
-    use HasWidgetShield;
+    protected static bool $isDiscovered = false;
 
     protected function getStats(): array
     {

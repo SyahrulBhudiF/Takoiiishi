@@ -13,6 +13,13 @@ class Distribution extends Model
 {
     use HasUuids;
 
+    protected function casts(): array
+    {
+        return [
+            'distribution_date' => 'date',
+        ];
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(DistributionItem::class);

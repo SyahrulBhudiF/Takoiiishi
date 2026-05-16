@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Ingredients\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -14,9 +15,20 @@ class IngredientForm
                 TextInput::make('name')
                     ->label('Nama Bahan')
                     ->required(),
-                TextInput::make('unit')
+                Select::make('unit')
                     ->label('Satuan')
-                    ->required(),
+                    ->options([
+                        'kg' => 'Kilogram (kg)',
+                        'g' => 'Gram (g)',
+                        'liter' => 'Liter',
+                        'ml' => 'Mililiter (ml)',
+                        'pcs' => 'Pieces (pcs)',
+                        'pack' => 'Pack',
+                        'box' => 'Box',
+                    ])
+                    ->required()
+                    ->native(false)
+                    ->searchable(),
                 TextInput::make('minimum_stock')
                     ->label('Stok Minimum')
                     ->required()

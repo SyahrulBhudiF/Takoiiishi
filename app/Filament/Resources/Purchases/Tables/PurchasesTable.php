@@ -11,6 +11,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use App\Models\PurchaseItem;
 use Illuminate\Database\Eloquent\Builder;
 
 class PurchasesTable
@@ -58,8 +59,9 @@ class PurchasesTable
             ->toolbarActions([
                 ExportAction::make()
                     ->exporter(PurchaseExporter::class)
+                    ->modifyQueryUsing(fn (): Builder => PurchaseItem::query()->with(['purchase.creator', 'ingredient']))
                     ->formats([ExportFormat::Csv, ExportFormat::Xlsx])
-                    ->fileName(fn () => 'laporan-pembelian-' . now()->format('Y-m-d-His')),
+                    ->fileName(fn () => 'laporan-pembelian-detail-' . now()->format('Y-m-d-His')),
             ]);
     }
 }

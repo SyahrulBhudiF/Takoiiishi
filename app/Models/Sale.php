@@ -12,6 +12,13 @@ class Sale extends Model
 {
     use HasUuids;
 
+    protected function casts(): array
+    {
+        return [
+            'sale_date' => 'date',
+        ];
+    }
+
     public function outlet(): BelongsTo
     {
         return $this->belongsTo(Outlet::class);

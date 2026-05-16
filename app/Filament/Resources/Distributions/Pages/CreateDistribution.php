@@ -12,6 +12,13 @@ class CreateDistribution extends CreateRecord
 {
     protected static string $resource = DistributionResource::class;
 
+    protected static bool $canCreateAnother = false;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['from_outlet_id'] = Outlet::pusat()?->id;

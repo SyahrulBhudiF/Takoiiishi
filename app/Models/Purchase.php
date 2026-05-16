@@ -13,6 +13,13 @@ class Purchase extends Model
 {
     use HasUuids;
 
+    protected function casts(): array
+    {
+        return [
+            'purchase_date' => 'date',
+        ];
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(PurchaseItem::class);

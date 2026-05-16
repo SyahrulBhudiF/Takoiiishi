@@ -19,15 +19,16 @@ class SaleExporter extends Exporter
             ExportColumn::make('outlet.name')->label('Outlet'),
             ExportColumn::make('portion_qty')->label('Porsi'),
             ExportColumn::make('creator.name')->label('Dibuat Oleh'),
+            ExportColumn::make('created_at')->label('Dibuat Pada'),
         ];
     }
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Your sale export has completed and ' . Number::format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+        $body = 'Export penjualan selesai. ' . Number::format($export->successful_rows) . ' baris berhasil diexport.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . Number::format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+            $body .= ' ' . Number::format($failedRowsCount) . ' baris gagal.';
         }
 
         return $body;

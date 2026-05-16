@@ -2,7 +2,7 @@
 
 namespace App\Filament\Exports;
 
-use App\Models\Purchase;
+use App\Models\PurchaseItem;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
@@ -10,23 +10,28 @@ use Illuminate\Support\Number;
 
 class PurchaseExporter extends Exporter
 {
-    protected static ?string $model = Purchase::class;
+    protected static ?string $model = PurchaseItem::class;
 
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('purchase_date')->label('Tanggal'),
-            ExportColumn::make('creator.name')->label('Dibuat Oleh'),
-            ExportColumn::make('total')->label('Total'),
+            ExportColumn::make('purchase.purchase_date')->label('Tanggal'),
+            ExportColumn::make('purchase.creator.name')->label('Dibuat Oleh'),
+            ExportColumn::make('ingredient.name')->label('Bahan'),
+            ExportColumn::make('quantity')->label('Jumlah'),
+            ExportColumn::make('ingredient.unit')->label('Satuan'),
+            ExportColumn::make('price')->label('Harga'),
+            ExportColumn::make('subtotal')->label('Subtotal'),
+            ExportColumn::make('purchase.total')->label('Total Pembelian'),
         ];
     }
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Your purchase export has completed and ' . Number::format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+        $body = 'Export pembelian selesai. ' . Number::format($export->successful_rows) . ' baris item berhasil diexport.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . Number::format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+            $body .= ' ' . Number::format($failedRowsCount) . ' baris gagal.';
         }
 
         return $body;

@@ -11,6 +11,13 @@ use Filament\Tables\Table;
 
 class IngredientsTable
 {
+    private static function formatQuantity(float $quantity, string $unit): string
+    {
+        $formatted = rtrim(rtrim(number_format($quantity, 2, ',', '.'), '0'), ',');
+
+        return "{$formatted} {$unit}";
+    }
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -18,16 +25,13 @@ class IngredientsTable
                 TextColumn::make('name')
                     ->label('Nama Bahan')
                     ->searchable(),
-                TextColumn::make('unit')
-                    ->label('Satuan')
-                    ->searchable(),
                 TextColumn::make('minimum_stock')
                     ->label('Stok Minimum')
-                    ->numeric()
+                    ->formatStateUsing(fn ($state, $record): string => self::formatQuantity((float) $state, $record->unit))
                     ->sortable(),
                 TextColumn::make('usage_per_portion')
                     ->label('Pemakaian per Porsi')
-                    ->numeric()
+                    ->formatStateUsing(fn ($state, $record): string => self::formatQuantity((float) $state, $record->unit))
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Dibuat')

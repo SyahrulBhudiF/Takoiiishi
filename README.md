@@ -1,58 +1,199 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Takoyaki
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel + Filament admin app for takoyaki outlet operations: users, roles, outlets, ingredients, purchases, stock, distributions, sales, imports/exports, and dashboard reports.
 
-## About Laravel
+## Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3+
+- Composer
+- Node.js + npm
+- MySQL 8+ or MariaDB
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Setup
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Default `.env.example` uses MySQL and database-backed sessions/cache/queue:
 
-## Contributing
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=takoyaki
+DB_USERNAME=root
+DB_PASSWORD=
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Create database first:
 
-## Code of Conduct
+```sql
+CREATE DATABASE takoyaki CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Then run migrations and seed demo users/data:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate --seed
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Build frontend assets:
 
-## License
+```bash
+npm run build
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Run locally
+
+Recommended: run all dev processes together:
+
+```bash
+composer run dev
+```
+
+This starts:
+
+- Laravel server: `php artisan serve`
+- Queue worker: `php artisan queue:listen --tries=1 --timeout=0`
+- Logs: `php artisan pail --timeout=0`
+- Vite dev server: `npm run dev`
+
+Open:
+
+```text
+http://localhost:8000/admin
+```
+
+Alternative, separate terminals:
+
+```bash
+php artisan serve
+npm run dev
+php artisan queue:work --tries=1 --timeout=0
+php artisan pail --timeout=0
+```
+
+## Queue
+
+Project uses Laravel database queue:
+
+```env
+QUEUE_CONNECTION=database
+```
+
+Queue tables come from `database/migrations/0001_01_01_000002_create_jobs_table.php`:
+
+- `jobs` queued jobs
+- `job_batches` batch metadata
+- `failed_jobs` failed job records
+
+Run worker in development:
+
+```bash
+php artisan queue:work --tries=1 --timeout=0
+```
+
+For local all-in-one development, prefer:
+
+```bash
+composer run dev
+```
+
+Queue matters for background work such as Filament Excel imports/exports and any queued Laravel jobs.
+
+## Demo login
+
+Seeded users use password:
+
+```text
+password
+```
+
+Accounts:
+
+| Role | Email | Username |
+| --- | --- | --- |
+| Admin Pusat | `admin.pusat@takoyaki.test` | `admin_pusat` |
+| Admin Cabang | `admin.cabang@takoyaki.test` | `admin_cabang` |
+| Pemilik Pusat | `pemilik.pusat@takoyaki.test` | `pemilik_pusat` |
+| Pemilik Cabang | `pemilik.cabang@takoyaki.test` | `pemilik_cabang` |
+
+## Useful commands
+
+```bash
+# Fresh database + seed
+php artisan migrate:fresh --seed
+
+# Run tests
+composer test
+
+# Format PHP
+vendor/bin/pint
+
+# Production-ish asset build
+npm run build
+```
+
+## Database migrations
+
+Migrations use UUID primary keys for domain models. Main tables:
+
+### Laravel/system tables
+
+- `users` — app users with UUID `id`, `email`, `username`, `role`, optional `outlet_id`.
+- `password_reset_tokens` — password reset tokens.
+- `sessions` — database session storage.
+- `cache`, `cache_locks` — database cache storage.
+- `jobs`, `job_batches`, `failed_jobs` — database queue storage.
+- `notifications` — Laravel notification storage; follow-up migration changes `notifiable_id` to UUID.
+
+### Permissions/RBAC
+
+From Filament Shield / Spatie Permission:
+
+- `permissions`
+- `roles`
+- `model_has_permissions`
+- `model_has_roles`
+- `role_has_permissions`
+
+Roles seeded:
+
+- `admin_pusat`
+- `admin_cabang`
+- `pemilik_pusat`
+- `pemilik_cabang`
+
+### Business tables
+
+- `outlets` — outlets/branches. Fields: `name`, `address`, `type` (`pusat`/`cabang`).
+- `ingredients` — inventory ingredients. Fields: `name`, `unit`, `minimum_stock`, `usage_per_portion`.
+- `purchases` — purchase header. Fields: `purchase_date`, `created_by`, `total`.
+- `purchase_items` — purchase lines. Links purchase + ingredient, stores `quantity`, `price`, `subtotal`.
+- `distributions` — stock transfer header. Links `from_outlet_id`, `to_outlet_id`, `created_by`.
+- `distribution_items` — transfer lines. Links distribution + ingredient, stores `quantity`.
+- `stocks` — current stock per outlet + ingredient. Unique key: `outlet_id`, `ingredient_id`.
+- `stock_movements` — stock ledger. Links outlet + ingredient, stores movement `type`, `qty_in`, `qty_out`, optional `reference`.
+- `sales` — sales records. Links outlet + user, stores `sale_date` and `portion_qty`.
+
+### Import/export tables
+
+Created for Filament Excel:
+
+- `imports` — import progress/status per user.
+- `exports` — export progress/status per user.
+- `failed_import_rows` — failed rows + validation errors for imports.
+
+## Data flow summary
+
+- Purchase adds stock to pusat outlet and creates `stock_movements`.
+- Distribution subtracts stock from source outlet, adds stock to destination outlet, and logs movements.
+- Sale subtracts ingredient stock based on each ingredient's `usage_per_portion` and sale `portion_qty`.
+- Dashboard reads sales, stock, low-stock ingredients, purchases, distributions, and movements.

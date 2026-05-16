@@ -13,6 +13,13 @@ class CreateSale extends CreateRecord
 {
     protected static string $resource = SaleResource::class;
 
+    protected static bool $canCreateAnother = false;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $user = auth()->user();
