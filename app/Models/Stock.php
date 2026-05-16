@@ -12,6 +12,11 @@ class Stock extends Model
 {
     use HasUuids;
 
+    public function isLow(): bool
+    {
+        return (float) $this->quantity <= (float) $this->ingredient?->minimum_stock;
+    }
+
     public function outlet(): BelongsTo
     {
         return $this->belongsTo(Outlet::class);
