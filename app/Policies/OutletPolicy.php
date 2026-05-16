@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Policies;
+
+use Illuminate\Foundation\Auth\User as AuthUser;
+use App\Models\Outlet;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class OutletPolicy
+{
+    use HandlesAuthorization;
+    
+    public function viewAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ViewAny:Outlet');
+    }
+
+    public function view(AuthUser $authUser, Outlet $outlet): bool
+    {
+        return $authUser->can('View:Outlet');
+    }
+
+    public function create(AuthUser $authUser): bool
+    {
+        return $authUser->can('Create:Outlet');
+    }
+
+    public function update(AuthUser $authUser, Outlet $outlet): bool
+    {
+        return $authUser->can('Update:Outlet');
+    }
+
+    public function delete(AuthUser $authUser, Outlet $outlet): bool
+    {
+        return $authUser->can('Delete:Outlet');
+    }
+
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:Outlet');
+    }
+
+    public function restore(AuthUser $authUser, Outlet $outlet): bool
+    {
+        return $authUser->can('Restore:Outlet');
+    }
+
+    public function forceDelete(AuthUser $authUser, Outlet $outlet): bool
+    {
+        return $authUser->can('ForceDelete:Outlet');
+    }
+
+    public function forceDeleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ForceDeleteAny:Outlet');
+    }
+
+    public function restoreAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('RestoreAny:Outlet');
+    }
+
+    public function replicate(AuthUser $authUser, Outlet $outlet): bool
+    {
+        return $authUser->can('Replicate:Outlet');
+    }
+
+    public function reorder(AuthUser $authUser): bool
+    {
+        return $authUser->can('Reorder:Outlet');
+    }
+
+}
