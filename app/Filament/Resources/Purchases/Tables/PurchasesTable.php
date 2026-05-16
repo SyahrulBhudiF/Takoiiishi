@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\Purchases\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use App\Filament\Exports\PurchaseExporter;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PurchasesTable
 {
@@ -34,12 +37,24 @@ class PurchasesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('date_range')
+                    ->schema([
+                        DatePicker::make('from')->label('Dari tanggal'),
+                        DatePicker::make('until')->label('Sampai tanggal'),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when($data['from'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('purchase_date', '>=', $date))
+                        ->when($data['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('purchase_date', '<=', $date))),
             ])
             ->recordActions([
                 ViewAction::make(),
 
             ])
-            ->toolbarActions([]);
+            ->toolbarActions([
+                ExportAction::make()
+                    ->exporter(PurchaseExporter::class)
+                    ->formats([ExportFormat::Csv, ExportFormat::Xlsx])
+                    ->fileName(fn () => 'laporan-pembelian-' . now()->format('Y-m-d-His')),
+            ]);
     }
 }

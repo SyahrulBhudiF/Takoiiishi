@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Stocks\Tables;
 
+use App\Filament\Exports\StockExporter;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -58,6 +61,11 @@ class StocksTable
                 ViewAction::make(),
 
             ])
-            ->toolbarActions([]);
+            ->toolbarActions([
+                ExportAction::make()
+                    ->exporter(StockExporter::class)
+                    ->formats([ExportFormat::Csv, ExportFormat::Xlsx])
+                    ->fileName(fn () => 'laporan-stok-' . now()->format('Y-m-d-His')),
+            ]);
     }
 }
