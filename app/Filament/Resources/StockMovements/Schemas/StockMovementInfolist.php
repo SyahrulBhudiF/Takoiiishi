@@ -11,21 +11,24 @@ class StockMovementInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('id')
-                    ->label('ID'),
-                TextEntry::make('outlet_id'),
-                TextEntry::make('ingredient_id'),
-                TextEntry::make('type'),
+                TextEntry::make('outlet.name')
+                    ->label('Outlet'),
+                TextEntry::make('ingredient.name')
+                    ->label('Bahan'),
+                TextEntry::make('type')
+                    ->label('Jenis Mutasi'),
                 TextEntry::make('qty_in')
+                    ->label('Masuk')
                     ->numeric(),
                 TextEntry::make('qty_out')
+                    ->label('Keluar')
                     ->numeric(),
-                TextEntry::make('reference')
-                    ->placeholder('-'),
                 TextEntry::make('created_at')
+                    ->label('Tanggal')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

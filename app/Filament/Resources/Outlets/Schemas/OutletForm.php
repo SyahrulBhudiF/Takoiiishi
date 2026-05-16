@@ -14,10 +14,13 @@ class OutletForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nama Outlet')
                     ->required(),
                 Textarea::make('address')
+                    ->label('Alamat')
                     ->columnSpanFull(),
                 Select::make('type')
+                    ->label('Tipe')
                     ->options([
                         'pusat' => 'Pusat',
                         'cabang' => 'Cabang',

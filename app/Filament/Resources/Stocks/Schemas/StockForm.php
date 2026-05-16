@@ -13,12 +13,15 @@ class StockForm
         return $schema
             ->components([
                 Select::make('outlet_id')
+                    ->label('Outlet')
                     ->relationship('outlet', 'name')
                     ->required(),
                 Select::make('ingredient_id')
+                    ->label('Bahan')
                     ->relationship('ingredient', 'name')
                     ->required(),
                 TextInput::make('quantity')
+                    ->label('Stok')
                     ->required()
                     ->numeric()
                     ->default(0.0),

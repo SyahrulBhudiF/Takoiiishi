@@ -11,18 +11,22 @@ class SaleInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('id')
-                    ->label('ID'),
                 TextEntry::make('sale_date')
+                    ->label('Tanggal')
                     ->date(),
-                TextEntry::make('outlet_id'),
+                TextEntry::make('outlet.name')
+                    ->label('Outlet'),
                 TextEntry::make('portion_qty')
+                    ->label('Jumlah Porsi')
                     ->numeric(),
-                TextEntry::make('created_by'),
+                TextEntry::make('creator.name')
+                    ->label('Dibuat oleh'),
                 TextEntry::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

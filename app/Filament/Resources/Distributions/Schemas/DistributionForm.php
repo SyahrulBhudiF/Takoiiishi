@@ -15,6 +15,7 @@ class DistributionForm
         return $schema
             ->components([
                 DatePicker::make('distribution_date')
+                    ->label('Tanggal Distribusi')
                     ->default(now())
                     ->required(),
                 Select::make('to_outlet_id')
@@ -25,9 +26,11 @@ class DistributionForm
                     ->relationship()
                     ->schema([
                         Select::make('ingredient_id')
+                            ->label('Bahan')
                             ->relationship('ingredient', 'name')
                             ->required(),
                         TextInput::make('quantity')
+                            ->label('Jumlah')
                             ->numeric()
                             ->required()
                             ->minValue(0.01),

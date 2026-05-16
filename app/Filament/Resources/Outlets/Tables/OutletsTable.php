@@ -14,18 +14,20 @@ class OutletsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->searchable(),
                 TextColumn::make('name')
+                    ->label('Nama Outlet')
                     ->searchable(),
                 TextColumn::make('type')
+                    ->label('Tipe')
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

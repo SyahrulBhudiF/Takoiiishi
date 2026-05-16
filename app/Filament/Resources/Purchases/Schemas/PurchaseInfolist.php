@@ -11,17 +11,20 @@ class PurchaseInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('id')
-                    ->label('ID'),
                 TextEntry::make('purchase_date')
+                    ->label('Tanggal')
                     ->date(),
-                TextEntry::make('created_by'),
+                TextEntry::make('creator.name')
+                    ->label('Dibuat oleh'),
                 TextEntry::make('total')
-                    ->numeric(),
+                    ->label('Total')
+                    ->money('IDR'),
                 TextEntry::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

@@ -19,19 +19,23 @@ class PurchasesTable
         return $table
             ->columns([
                 TextColumn::make('purchase_date')
+                    ->label('Tanggal')
                     ->date()
                     ->sortable(),
                 TextColumn::make('creator.name')
                     ->label('Dibuat oleh')
                     ->searchable(),
                 TextColumn::make('total')
-                    ->numeric()
+                    ->label('Total')
+                    ->money('IDR')
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

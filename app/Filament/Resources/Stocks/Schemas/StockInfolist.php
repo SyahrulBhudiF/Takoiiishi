@@ -11,16 +11,19 @@ class StockInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('id')
-                    ->label('ID'),
-                TextEntry::make('outlet_id'),
-                TextEntry::make('ingredient_id'),
+                TextEntry::make('outlet.name')
+                    ->label('Outlet'),
+                TextEntry::make('ingredient.name')
+                    ->label('Bahan'),
                 TextEntry::make('quantity')
+                    ->label('Stok')
                     ->numeric(),
                 TextEntry::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

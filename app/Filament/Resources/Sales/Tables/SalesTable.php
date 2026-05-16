@@ -20,22 +20,26 @@ class SalesTable
         return $table
             ->columns([
                 TextColumn::make('sale_date')
+                    ->label('Tanggal')
                     ->date()
                     ->sortable(),
                 TextColumn::make('outlet.name')
                     ->label('Outlet')
                     ->searchable(),
                 TextColumn::make('portion_qty')
+                    ->label('Jumlah Porsi')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('creator.name')
                     ->label('Dibuat oleh')
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

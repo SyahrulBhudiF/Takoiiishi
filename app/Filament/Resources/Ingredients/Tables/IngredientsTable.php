@@ -14,24 +14,27 @@ class IngredientsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->searchable(),
                 TextColumn::make('name')
+                    ->label('Nama Bahan')
                     ->searchable(),
                 TextColumn::make('unit')
+                    ->label('Satuan')
                     ->searchable(),
                 TextColumn::make('minimum_stock')
+                    ->label('Stok Minimum')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('usage_per_portion')
+                    ->label('Pemakaian per Porsi')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

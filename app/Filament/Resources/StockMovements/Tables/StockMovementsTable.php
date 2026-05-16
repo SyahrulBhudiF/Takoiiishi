@@ -24,20 +24,22 @@ class StockMovementsTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('type')
+                    ->label('Jenis Mutasi')
                     ->searchable(),
                 TextColumn::make('qty_in')
+                    ->label('Masuk')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('qty_out')
+                    ->label('Keluar')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('reference')
-                    ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('Tanggal')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
                 TextColumn::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

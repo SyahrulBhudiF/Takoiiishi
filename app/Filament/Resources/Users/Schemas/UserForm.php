@@ -15,23 +15,26 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nama')
                     ->required(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->email()
                     ->required(),
                 TextInput::make('username')
+                    ->label('Username')
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
                     ->password()
                     ->required(fn (string $operation): bool => $operation === 'create')
                     ->dehydrated(fn (?string $state): bool => filled($state)),
                 Select::make('role')
+                    ->label('Role')
                     ->options(UserRole::options())
                     ->live()
                     ->required(),
                 Select::make('outlet_id')
+                    ->label('Outlet')
                     ->relationship('outlet', 'name')
                     ->visible(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->isBranchScoped() ?? false)
                     ->required(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->isBranchScoped() ?? false),

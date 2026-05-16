@@ -11,17 +11,21 @@ class DistributionInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('id')
-                    ->label('ID'),
                 TextEntry::make('distribution_date')
+                    ->label('Tanggal')
                     ->date(),
-                TextEntry::make('from_outlet_id'),
-                TextEntry::make('to_outlet_id'),
-                TextEntry::make('created_by'),
+                TextEntry::make('fromOutlet.name')
+                    ->label('Dari'),
+                TextEntry::make('toOutlet.name')
+                    ->label('Ke'),
+                TextEntry::make('creator.name')
+                    ->label('Dibuat oleh'),
                 TextEntry::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Diperbarui')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

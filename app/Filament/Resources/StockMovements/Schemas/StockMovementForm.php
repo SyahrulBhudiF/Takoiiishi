@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\StockMovements\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -11,21 +12,27 @@ class StockMovementForm
     {
         return $schema
             ->components([
-                TextInput::make('outlet_id')
+                Select::make('outlet_id')
+                    ->label('Outlet')
+                    ->relationship('outlet', 'name')
                     ->required(),
-                TextInput::make('ingredient_id')
+                Select::make('ingredient_id')
+                    ->label('Bahan')
+                    ->relationship('ingredient', 'name')
                     ->required(),
                 TextInput::make('type')
+                    ->label('Jenis Mutasi')
                     ->required(),
                 TextInput::make('qty_in')
+                    ->label('Masuk')
                     ->required()
                     ->numeric()
                     ->default(0.0),
                 TextInput::make('qty_out')
+                    ->label('Keluar')
                     ->required()
                     ->numeric()
                     ->default(0.0),
-                TextInput::make('reference'),
             ]);
     }
 }
