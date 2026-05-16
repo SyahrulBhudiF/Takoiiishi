@@ -19,8 +19,8 @@ class SaleForm
                     ->required(),
                 Select::make('outlet_id')
                     ->relationship('outlet', 'name', fn ($query) => $query->where('type', 'cabang'))
-                    ->default(fn () => UserRole::tryFrom(auth()->user()?->role?->value ?? auth()->user()?->role)?->isBranchScoped() ? auth()->user()->outlet_id : null)
-                    ->disabled(fn (): bool => UserRole::tryFrom(auth()->user()?->role?->value ?? auth()->user()?->role)?->isBranchScoped() ?? false)
+                    ->default(fn () => UserRole::parse(auth()->user()?->role)?->isBranchScoped() ? auth()->user()->outlet_id : null)
+                    ->disabled(fn (): bool => UserRole::parse(auth()->user()?->role)?->isBranchScoped() ?? false)
                     ->dehydrated()
                     ->required(),
                 TextInput::make('portion_qty')

@@ -24,6 +24,11 @@ enum UserRole: string
         return in_array($this, [self::AdminCabang, self::PemilikCabang], true);
     }
 
+    public static function parse(self|string|null $role): ?self
+    {
+        return $role instanceof self ? $role : self::tryFrom((string) $role);
+    }
+
     public static function options(): array
     {
         return collect(self::cases())

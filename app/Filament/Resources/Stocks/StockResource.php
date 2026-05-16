@@ -46,7 +46,7 @@ class StockResource extends Resource
         $query = parent::getEloquentQuery();
         $user = auth()->user();
 
-        if ($user && UserRole::tryFrom($user->role->value ?? $user->role)?->isBranchScoped()) {
+        if ($user && UserRole::parse($user->role)?->isBranchScoped()) {
             $query->where('outlet_id', $user->outlet_id);
         }
 
