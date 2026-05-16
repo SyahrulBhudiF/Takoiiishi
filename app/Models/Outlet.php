@@ -10,4 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class Outlet extends Model
 {
     use HasUuids;
+
+    public static function pusat(): ?self
+    {
+        return self::query()->where('type', 'pusat')->first();
+    }
 }
