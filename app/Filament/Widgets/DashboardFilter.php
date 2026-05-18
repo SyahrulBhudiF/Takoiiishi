@@ -38,7 +38,7 @@ class DashboardFilter extends Widget implements HasForms
         $user = auth()->user();
         $role = UserRole::parse($user?->role);
 
-        if ($role?->isBranchScoped()) {
+        if ($role?->isOutletScoped()) {
             $this->outletId = (string) $user->outlet_id;
         }
     }
@@ -70,7 +70,7 @@ class DashboardFilter extends Widget implements HasForms
                     ->placeholder('Semua Outlet')
                     ->native(false)
                     ->live()
-                    ->visible(fn () => !$role?->isBranchScoped())
+                    ->visible(fn () => $role?->canFilterOutlet() ?? false)
                     ->afterStateUpdated(fn () => $this->dispatchFilterUpdated()),
             ])
             ->columns([
@@ -98,7 +98,7 @@ class DashboardFilter extends Widget implements HasForms
         $user = auth()->user();
         $role = UserRole::parse($user?->role);
 
-        if (!$role?->isBranchScoped()) {
+        if ($role?->canFilterOutlet()) {
             $this->outletId = null;
         }
 

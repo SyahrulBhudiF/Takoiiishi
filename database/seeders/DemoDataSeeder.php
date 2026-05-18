@@ -48,7 +48,7 @@ class DemoDataSeeder extends Seeder
             'seed' => $data,
         ]);
 
-        $admin = User::query()->where('role', 'admin_pusat')->first();
+        $admin = User::query()->where('role', 'staff_gudang')->first();
         $stock = app(StockService::class);
 
         $purchase = Purchase::query()->firstOrCreate(

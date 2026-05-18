@@ -36,8 +36,8 @@ class UserForm
                 Select::make('outlet_id')
                     ->label('Outlet')
                     ->relationship('outlet', 'name')
-                    ->visible(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->isBranchScoped() ?? false)
-                    ->required(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->isBranchScoped() ?? false),
+                    ->visible(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->requiresOutlet() ?? false)
+                    ->required(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->requiresOutlet() ?? false),
             ]);
     }
 }

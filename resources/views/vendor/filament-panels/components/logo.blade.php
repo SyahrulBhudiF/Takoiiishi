@@ -9,9 +9,17 @@
         'fi-logo',
         'fi-logo-light' => $hasDarkModeBrandLogo && (! $isDarkMode),
         'fi-logo-dark' => $isDarkMode,
+        'takoyaki-logo',
+    ]);
+
+    $getLogoWrapperClasses = fn (bool $isDarkMode): string => \Illuminate\Support\Arr::toCssClasses([
+        'fi-logo',
+        'fi-logo-light' => $hasDarkModeBrandLogo && (! $isDarkMode),
+        'fi-logo-dark' => $isDarkMode,
     ]);
 
     $logoStyles = "height: {$brandLogoHeight}";
+    $logoWrapperStyles = "display: inline-flex; align-items: center; gap: 0.5rem";
 @endphp
 
 @capture($content, $logo, $isDarkMode = false)
@@ -26,15 +34,23 @@
             {{ $logo }}
         </div>
     @elseif (filled($logo))
-        <img
-            alt="{{ __('filament-panels::layout.logo.alt', ['name' => $brandName]) }}"
-            src="{{ $logo }}"
+        <div
             {{
                 $attributes
-                    ->class([$getLogoClasses($isDarkMode)])
-                    ->style([$logoStyles])
+                    ->class([$getLogoWrapperClasses($isDarkMode)])
+                    ->style([$logoWrapperStyles])
             }}
-        />
+        >
+            <img
+                class="takoyaki-logo shrink-0"
+                alt="{{ __('filament-panels::layout.logo.alt', ['name' => $brandName]) }}"
+                src="{{ $logo }}"
+                style="{{ $logoStyles }}; display: block;"
+            />
+            <span style="display: block; transform: translateY(1px);" class="text-lg font-semibold leading-none tracking-tight text-gray-950 dark:text-white">
+                {{ $brandName }}
+            </span>
+        </div>
     @else
         <div
             {{

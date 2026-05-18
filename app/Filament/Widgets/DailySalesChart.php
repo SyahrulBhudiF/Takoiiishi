@@ -49,7 +49,7 @@ class DailySalesChart extends ChartWidget
         $role = UserRole::parse($user?->role);
 
         $outletId = $this->outletId;
-        if ($role?->isBranchScoped()) {
+        if ($role?->isOutletScoped()) {
             $outletId = $user->outlet_id;
         }
 

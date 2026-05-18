@@ -24,7 +24,7 @@ class CreateSale extends CreateRecord
     {
         $user = auth()->user();
 
-        if (UserRole::parse($user->role)?->isBranchScoped()) {
+        if (UserRole::parse($user->role)?->isOutletScoped()) {
             $data['outlet_id'] = $user->outlet_id;
         }
 

@@ -19,7 +19,6 @@ class PermissionSeeder extends Seeder
             }
         }
 
-        // Widget permissions - Filament Shield format
         $widgetPermissions = [
             'widget_DashboardOverview',
             'widget_LowStockOverview',
@@ -31,31 +30,44 @@ class PermissionSeeder extends Seeder
             Permission::query()->firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        $all = Permission::query()->pluck('name')->all();
+        $manageActions = ['ViewAny', 'View', 'Create', 'Update', 'Delete', 'DeleteAny'];
+        $viewActions = ['ViewAny', 'View'];
 
-        Role::findByName('admin_pusat')->syncPermissions($all);
+        $permissions = [
+            'owner' => [
+                ...$this->resourcePermissions(['Stock', 'StockMovement', 'Purchase', 'Distribution', 'Sale'], $viewActions),
+                ...$widgetPermissions,
+            ],
+            'administrator_sistem' => [
+                ...$this->resourcePermissions(['User', 'Outlet'], $manageActions),
+            ],
+            'staff_gudang' => [
+                ...$this->resourcePermissions(['Ingredient', 'Purchase', 'Distribution'], $manageActions),
+                ...$this->resourcePermissions(['Stock', 'StockMovement', 'Sale'], $viewActions),
+                ...$widgetPermissions,
+            ],
+            'karyawan_outlet' => [
+                ...$this->resourcePermissions(['Sale'], ['ViewAny', 'View', 'Create']),
+                ...$this->resourcePermissions(['Stock', 'StockMovement'], $viewActions),
+                ...$widgetPermissions,
+            ],
+        ];
 
-        Role::findByName('admin_cabang')->syncPermissions([
-            'ViewAny:Stock', 'View:Stock',
-            'ViewAny:StockMovement', 'View:StockMovement',
-            'ViewAny:Sale', 'View:Sale', 'Create:Sale',
-            ...$widgetPermissions,
-        ]);
+        foreach ($permissions as $role => $rolePermissions) {
+            Role::findByName($role)->syncPermissions($rolePermissions);
+        }
+    }
 
-        Role::findByName('pemilik_pusat')->syncPermissions([
-            'ViewAny:Stock', 'View:Stock',
-            'ViewAny:StockMovement', 'View:StockMovement',
-            'ViewAny:Purchase', 'View:Purchase',
-            'ViewAny:Distribution', 'View:Distribution',
-            'ViewAny:Sale', 'View:Sale',
-            ...$widgetPermissions,
-        ]);
+    private function resourcePermissions(array $resources, array $actions): array
+    {
+        $permissions = [];
 
-        Role::findByName('pemilik_cabang')->syncPermissions([
-            'ViewAny:Stock', 'View:Stock',
-            'ViewAny:StockMovement', 'View:StockMovement',
-            'ViewAny:Sale', 'View:Sale',
-            ...$widgetPermissions,
-        ]);
+        foreach ($resources as $resource) {
+            foreach ($actions as $action) {
+                $permissions[] = "{$action}:{$resource}";
+            }
+        }
+
+        return $permissions;
     }
 }

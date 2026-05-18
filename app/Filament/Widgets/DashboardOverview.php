@@ -55,7 +55,7 @@ class DashboardOverview extends StatsOverviewWidget
         $role = UserRole::parse($user?->role);
 
         $outletId = $this->outletId;
-        if ($role?->isBranchScoped()) {
+        if ($role?->isOutletScoped()) {
             $outletId = $user->outlet_id;
         }
 
@@ -124,7 +124,7 @@ class DashboardOverview extends StatsOverviewWidget
         ];
 
         // Additional stats for pusat roles
-        if ($role === UserRole::AdminPusat || $role === UserRole::PemilikPusat) {
+        if ($role === UserRole::StaffGudang || $role === UserRole::Owner) {
             $distQuery = Distribution::query()->whereBetween('distribution_date', [$startDate, $endDate]);
             $distCount = $distQuery->count();
 
@@ -134,7 +134,7 @@ class DashboardOverview extends StatsOverviewWidget
                 ->color('warning');
         }
 
-        if ($role === UserRole::AdminPusat) {
+        if ($role === UserRole::StaffGudang || $role === UserRole::Owner) {
             $purchaseQuery = Purchase::query()->whereBetween('purchase_date', [$startDate, $endDate]);
             $purchaseCount = $purchaseQuery->count();
             $purchaseTotal = $purchaseQuery->sum('total');

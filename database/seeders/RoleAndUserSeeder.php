@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Outlet;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use App\Models\Role;
 
 class RoleAndUserSeeder extends Seeder
 {
@@ -21,15 +21,15 @@ class RoleAndUserSeeder extends Seeder
             ['address' => 'Outlet cabang 1', 'type' => 'cabang'],
         );
 
-        foreach (['admin_pusat', 'admin_cabang', 'pemilik_pusat', 'pemilik_cabang'] as $role) {
+        foreach (['owner', 'administrator_sistem', 'staff_gudang', 'karyawan_outlet'] as $role) {
             Role::query()->firstOrCreate(['name' => $role, 'guard_name' => 'web']);
         }
 
         $users = [
-            ['name' => 'Admin Pusat', 'email' => 'admin.pusat@takoyaki.test', 'username' => 'admin_pusat', 'role' => 'admin_pusat', 'outlet_id' => null],
-            ['name' => 'Admin Cabang', 'email' => 'admin.cabang@takoyaki.test', 'username' => 'admin_cabang', 'role' => 'admin_cabang', 'outlet_id' => $cabang->id],
-            ['name' => 'Pemilik Pusat', 'email' => 'pemilik.pusat@takoyaki.test', 'username' => 'pemilik_pusat', 'role' => 'pemilik_pusat', 'outlet_id' => null],
-            ['name' => 'Pemilik Cabang', 'email' => 'pemilik.cabang@takoyaki.test', 'username' => 'pemilik_cabang', 'role' => 'pemilik_cabang', 'outlet_id' => $cabang->id],
+            ['name' => 'Owner', 'email' => 'owner@gmail.com', 'username' => 'owner', 'role' => 'owner', 'outlet_id' => null],
+            ['name' => 'Administrator Sistem', 'email' => 'administrator@gmail.com', 'username' => 'administrator', 'role' => 'administrator_sistem', 'outlet_id' => null],
+            ['name' => 'Staff Gudang', 'email' => 'staff.gudang@gmail.com', 'username' => 'staff_gudang', 'role' => 'staff_gudang', 'outlet_id' => $pusat->id],
+            ['name' => 'Karyawan Outlet', 'email' => 'karyawan.outlet@gmail.com', 'username' => 'karyawan_outlet', 'role' => 'karyawan_outlet', 'outlet_id' => $cabang->id],
         ];
 
         foreach ($users as $data) {

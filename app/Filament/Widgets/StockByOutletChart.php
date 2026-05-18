@@ -47,7 +47,7 @@ class StockByOutletChart extends ChartWidget
             ->orderBy('outlets.type')
             ->orderBy('outlets.name');
 
-        if ($role?->isBranchScoped()) {
+        if ($role?->isOutletScoped()) {
             $query->where('stocks.outlet_id', $user->outlet_id);
         } elseif ($this->outletId) {
             $query->where('stocks.outlet_id', $this->outletId);

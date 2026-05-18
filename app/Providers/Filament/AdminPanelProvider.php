@@ -29,6 +29,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('Takoiiishi')
+            ->brandLogo(asset('logo/logo.jpeg'))
+            ->brandLogoHeight('2.25rem')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->globalSearch(false)

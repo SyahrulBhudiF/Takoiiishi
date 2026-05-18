@@ -4,24 +4,34 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case AdminPusat = 'admin_pusat';
-    case AdminCabang = 'admin_cabang';
-    case PemilikPusat = 'pemilik_pusat';
-    case PemilikCabang = 'pemilik_cabang';
+    case Owner = 'owner';
+    case AdministratorSistem = 'administrator_sistem';
+    case StaffGudang = 'staff_gudang';
+    case KaryawanOutlet = 'karyawan_outlet';
 
     public function label(): string
     {
         return match ($this) {
-            self::AdminPusat => 'Admin Pusat',
-            self::AdminCabang => 'Admin Cabang',
-            self::PemilikPusat => 'Pemilik Pusat',
-            self::PemilikCabang => 'Pemilik Cabang',
+            self::Owner => 'Owner',
+            self::AdministratorSistem => 'Administrator Sistem',
+            self::StaffGudang => 'Staff Gudang',
+            self::KaryawanOutlet => 'Karyawan Outlet',
         };
     }
 
-    public function isBranchScoped(): bool
+    public function requiresOutlet(): bool
     {
-        return in_array($this, [self::AdminCabang, self::PemilikCabang], true);
+        return $this === self::KaryawanOutlet;
+    }
+
+    public function isOutletScoped(): bool
+    {
+        return $this === self::KaryawanOutlet;
+    }
+
+    public function canFilterOutlet(): bool
+    {
+        return in_array($this, [self::Owner, self::StaffGudang], true);
     }
 
     public static function parse(self|string|null $role): ?self
