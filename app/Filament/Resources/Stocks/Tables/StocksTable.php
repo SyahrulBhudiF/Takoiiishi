@@ -38,12 +38,12 @@ class StocksTable
                     ->label('Minimum')
                     ->numeric()
                     ->sortable(),
-                IconColumn::make('is_low')
-                    ->label('Minimum')
-                    ->state(fn ($record): bool => $record->isLow())
+                IconColumn::make('is_enough')
+                    ->label('Status Minimum')
+                    ->state(fn ($record): bool => ! $record->isLow())
                     ->boolean()
-                    ->trueColor('danger')
-                    ->falseColor('success'),
+                    ->trueColor('success')
+                    ->falseColor('danger'),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime(DateFormat::DATE_TIME)
