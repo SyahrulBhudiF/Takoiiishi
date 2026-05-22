@@ -7,6 +7,7 @@ use App\Support\DateFormat;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -55,6 +56,17 @@ class StocksTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Filter::make('outlet')
+                    ->label('Outlet')
+                    ->schema([
+                        Select::make('outlet_id')
+                            ->label('Outlet')
+                            ->relationship('outlet', 'name')
+                            ->native(false)
+                            ->searchable()
+                            ->preload(),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when($data['outlet_id'] ?? null, fn (Builder $query, string $outletId): Builder => $query->where('outlet_id', $outletId))),
                 Filter::make('low_stock')
                     ->label('Stok minimum')
                     ->query(fn (Builder $query): Builder => $query->whereColumn('quantity', '<=', 'ingredients.minimum_stock')),

@@ -109,6 +109,42 @@ class StockFlowTest extends TestCase
         $this->assertDatabaseHas('stock_movements', ['type' => 'sale_out', 'reference' => $sale->id, 'qty_out' => 1]);
     }
 
+    public function test_sale_deducts_all_ingredient_usage_for_each_portion(): void
+    {
+        $this->seed(RoleAndUserSeeder::class);
+
+        $cabang = Outlet::query()->where('type', 'cabang')->first();
+        $user = User::query()->first();
+        $ingredients = [
+            Ingredient::query()->create(['name' => 'Tepung', 'unit' => 'kg', 'minimum_stock' => 1, 'usage_per_portion' => 0.15]),
+            Ingredient::query()->create(['name' => 'Saus', 'unit' => 'liter', 'minimum_stock' => 1, 'usage_per_portion' => 0.03]),
+            Ingredient::query()->create(['name' => 'Tusuk', 'unit' => 'pcs', 'minimum_stock' => 10, 'usage_per_portion' => 1]),
+        ];
+        $stock = app(StockService::class);
+
+        $stock->add($cabang->id, $ingredients[0]->id, 10, 'distribution_in', 'seed');
+        $stock->add($cabang->id, $ingredients[1]->id, 5, 'distribution_in', 'seed');
+        $stock->add($cabang->id, $ingredients[2]->id, 100, 'distribution_in', 'seed');
+
+        $sale = Sale::query()->create([
+            'sale_date' => now(),
+            'outlet_id' => $cabang->id,
+            'portion_qty' => 1,
+            'created_by' => $user->id,
+        ]);
+
+        foreach ($ingredients as $ingredient) {
+            $stock->subtract($cabang->id, $ingredient->id, $sale->portion_qty * $ingredient->usage_per_portion, 'sale_out', $sale->id);
+        }
+
+        $this->assertEquals(9.85, Stock::query()->where('outlet_id', $cabang->id)->where('ingredient_id', $ingredients[0]->id)->first()->quantity);
+        $this->assertEquals(4.97, Stock::query()->where('outlet_id', $cabang->id)->where('ingredient_id', $ingredients[1]->id)->first()->quantity);
+        $this->assertEquals(99, Stock::query()->where('outlet_id', $cabang->id)->where('ingredient_id', $ingredients[2]->id)->first()->quantity);
+        $this->assertDatabaseHas('stock_movements', ['type' => 'sale_out', 'reference' => $sale->id, 'ingredient_id' => $ingredients[0]->id, 'qty_out' => 0.15]);
+        $this->assertDatabaseHas('stock_movements', ['type' => 'sale_out', 'reference' => $sale->id, 'ingredient_id' => $ingredients[1]->id, 'qty_out' => 0.03]);
+        $this->assertDatabaseHas('stock_movements', ['type' => 'sale_out', 'reference' => $sale->id, 'ingredient_id' => $ingredients[2]->id, 'qty_out' => 1]);
+    }
+
     public function test_stock_cannot_go_negative(): void
     {
         $this->seed(RoleAndUserSeeder::class);
