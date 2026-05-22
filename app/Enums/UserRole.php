@@ -21,7 +21,7 @@ enum UserRole: string
 
     public function requiresOutlet(): bool
     {
-        return $this === self::KaryawanOutlet;
+        return in_array($this, [self::StaffGudang, self::KaryawanOutlet], true);
     }
 
     public function isOutletScoped(): bool

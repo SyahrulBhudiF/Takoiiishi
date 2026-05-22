@@ -56,6 +56,7 @@ class DistributionResource extends Resource
             'index' => ListDistributions::route('/'),
             'create' => CreateDistribution::route('/create'),
             'view' => ViewDistribution::route('/{record}'),
+            'edit' => EditDistribution::route('/{record}/edit'),
         ];
     }
 }

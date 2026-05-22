@@ -15,4 +15,9 @@ class Outlet extends Model
     {
         return self::query()->where('type', 'pusat')->first();
     }
+
+    public static function warehouse(): ?self
+    {
+        return self::query()->where('type', 'gudang')->first();
+    }
 }

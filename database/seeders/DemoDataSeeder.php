@@ -15,9 +15,14 @@ class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
+        $gudang = Outlet::query()->firstOrCreate(
+            ['name' => 'Gudang Sukun'],
+            ['address' => 'Sukun', 'type' => 'gudang'],
+        );
+
         $pusat = Outlet::query()->firstOrCreate(
-            ['name' => 'Pusat'],
-            ['address' => 'Outlet pusat', 'type' => 'pusat'],
+            ['name' => 'Pusat Sumberpucung'],
+            ['address' => 'Sumberpucung', 'type' => 'pusat'],
         );
 
         $cabangSatu = Outlet::query()->firstOrCreate(
@@ -70,19 +75,24 @@ class DemoDataSeeder extends Seeder
                 ['quantity' => $seed['purchase_qty'], 'price' => $seed['price'], 'subtotal' => $subtotal],
             );
 
-            $stock->add($pusat->id, $ingredient->id, $seed['purchase_qty'], 'purchase_in', $purchase->id);
+            $stock->add($gudang->id, $ingredient->id, $seed['purchase_qty'], 'purchase_in', $purchase->id);
         }
 
         $purchase->update(['total' => $total]);
 
+        $distributionPusat = Distribution::query()->firstOrCreate(
+            ['distribution_date' => now()->subDays(6)->toDateString(), 'to_outlet_id' => $pusat->id],
+            ['from_outlet_id' => $gudang->id, 'created_by' => $admin->id],
+        );
+
         $distributionOne = Distribution::query()->firstOrCreate(
             ['distribution_date' => now()->subDays(5)->toDateString(), 'to_outlet_id' => $cabangSatu->id],
-            ['from_outlet_id' => $pusat->id, 'created_by' => $admin->id],
+            ['from_outlet_id' => $gudang->id, 'created_by' => $admin->id],
         );
 
         $distributionTwo = Distribution::query()->firstOrCreate(
             ['distribution_date' => now()->subDays(4)->toDateString(), 'to_outlet_id' => $cabangDua->id],
-            ['from_outlet_id' => $pusat->id, 'created_by' => $admin->id],
+            ['from_outlet_id' => $gudang->id, 'created_by' => $admin->id],
         );
 
         foreach ($ingredients as $item) {
@@ -90,12 +100,16 @@ class DemoDataSeeder extends Seeder
             $ingredient = $item['model'];
             $seed = $item['seed'];
 
+            $distributionPusat->items()->firstOrCreate(['ingredient_id' => $ingredient->id], ['quantity' => $seed['dist_one']]);
+            $stock->subtract($gudang->id, $ingredient->id, $seed['dist_one'], 'distribution_out', $distributionPusat->id);
+            $stock->add($pusat->id, $ingredient->id, $seed['dist_one'], 'distribution_in', $distributionPusat->id);
+
             $distributionOne->items()->firstOrCreate(['ingredient_id' => $ingredient->id], ['quantity' => $seed['dist_one']]);
-            $stock->subtract($pusat->id, $ingredient->id, $seed['dist_one'], 'distribution_out', $distributionOne->id);
+            $stock->subtract($gudang->id, $ingredient->id, $seed['dist_one'], 'distribution_out', $distributionOne->id);
             $stock->add($cabangSatu->id, $ingredient->id, $seed['dist_one'], 'distribution_in', $distributionOne->id);
 
             $distributionTwo->items()->firstOrCreate(['ingredient_id' => $ingredient->id], ['quantity' => $seed['dist_two']]);
-            $stock->subtract($pusat->id, $ingredient->id, $seed['dist_two'], 'distribution_out', $distributionTwo->id);
+            $stock->subtract($gudang->id, $ingredient->id, $seed['dist_two'], 'distribution_out', $distributionTwo->id);
             $stock->add($cabangDua->id, $ingredient->id, $seed['dist_two'], 'distribution_in', $distributionTwo->id);
         }
 

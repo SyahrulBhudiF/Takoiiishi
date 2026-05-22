@@ -30,12 +30,21 @@ class UserForm
                     ->dehydrated(fn (?string $state): bool => filled($state)),
                 Select::make('role')
                     ->label('Role')
-                    ->options(UserRole::options())
+                    ->options(fn (?\App\Models\User $record): array => collect(UserRole::options())
+                        ->when(
+                            UserRole::parse($record?->role) !== UserRole::Owner,
+                            fn ($options) => $options->except(UserRole::Owner->value),
+                        )
+                        ->all())
                     ->live()
                     ->required(),
                 Select::make('outlet_id')
                     ->label('Outlet')
-                    ->relationship('outlet', 'name')
+                    ->relationship('outlet', 'name', fn ($query, callable $get) => match (UserRole::tryFrom($get('role'))) {
+                        UserRole::StaffGudang => $query->where('type', 'gudang'),
+                        UserRole::KaryawanOutlet => $query->whereIn('type', ['pusat', 'cabang']),
+                        default => $query,
+                    })
                     ->visible(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->requiresOutlet() ?? false)
                     ->required(fn (callable $get): bool => UserRole::tryFrom($get('role'))?->requiresOutlet() ?? false),
             ]);

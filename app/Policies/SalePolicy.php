@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Sale;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -29,17 +30,34 @@ class SalePolicy
 
     public function update(AuthUser $authUser, Sale $sale): bool
     {
-        return $authUser->can('Update:Sale');
+        if (! $authUser->can('Update:Sale')) {
+            return false;
+        }
+
+        if (UserRole::parse($authUser->role) === UserRole::KaryawanOutlet) {
+            return $sale->created_by === $authUser->id;
+        }
+
+        return true;
     }
 
     public function delete(AuthUser $authUser, Sale $sale): bool
     {
-        return $authUser->can('Delete:Sale');
+        if (! $authUser->can('Delete:Sale')) {
+            return false;
+        }
+
+        if (UserRole::parse($authUser->role) === UserRole::KaryawanOutlet) {
+            return $sale->created_by === $authUser->id;
+        }
+
+        return true;
     }
 
     public function deleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('DeleteAny:Sale');
+        return UserRole::parse($authUser->role) !== UserRole::KaryawanOutlet
+            && $authUser->can('DeleteAny:Sale');
     }
 
     public function restore(AuthUser $authUser, Sale $sale): bool

@@ -20,11 +20,11 @@ class StockFlowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_purchase_adds_stock_to_pusat(): void
+    public function test_purchase_adds_stock_to_warehouse(): void
     {
         $this->seed(RoleAndUserSeeder::class);
 
-        $pusat = Outlet::pusat();
+        $warehouse = Outlet::warehouse();
         $ingredient = Ingredient::query()->create([
             'name' => 'Tepung',
             'unit' => 'kg',
@@ -37,15 +37,15 @@ class StockFlowTest extends TestCase
             'total' => 10000,
         ]);
 
-        app(StockService::class)->add($pusat->id, $ingredient->id, 5, 'purchase_in', $purchase->id);
+        app(StockService::class)->add($warehouse->id, $ingredient->id, 5, 'purchase_in', $purchase->id);
 
         $this->assertDatabaseHas('stocks', [
-            'outlet_id' => $pusat->id,
+            'outlet_id' => $warehouse->id,
             'ingredient_id' => $ingredient->id,
             'quantity' => 5,
         ]);
         $this->assertDatabaseHas('stock_movements', [
-            'outlet_id' => $pusat->id,
+            'outlet_id' => $warehouse->id,
             'ingredient_id' => $ingredient->id,
             'type' => 'purchase_in',
             'qty_in' => 5,
@@ -53,11 +53,11 @@ class StockFlowTest extends TestCase
         ]);
     }
 
-    public function test_distribution_moves_stock_from_pusat_to_cabang(): void
+    public function test_distribution_moves_stock_from_warehouse_to_outlet(): void
     {
         $this->seed(RoleAndUserSeeder::class);
 
-        $pusat = Outlet::pusat();
+        $warehouse = Outlet::warehouse();
         $cabang = Outlet::query()->where('type', 'cabang')->first();
         $ingredient = Ingredient::query()->create([
             'name' => 'Saus',
@@ -66,18 +66,18 @@ class StockFlowTest extends TestCase
             'usage_per_portion' => 0.05,
         ]);
         $stock = app(StockService::class);
-        $stock->add($pusat->id, $ingredient->id, 10, 'purchase_in', 'seed');
+        $stock->add($warehouse->id, $ingredient->id, 10, 'purchase_in', 'seed');
         $distribution = Distribution::query()->create([
             'distribution_date' => now(),
-            'from_outlet_id' => $pusat->id,
+            'from_outlet_id' => $warehouse->id,
             'to_outlet_id' => $cabang->id,
             'created_by' => User::query()->first()->id,
         ]);
 
-        $stock->subtract($pusat->id, $ingredient->id, 3, 'distribution_out', $distribution->id);
+        $stock->subtract($warehouse->id, $ingredient->id, 3, 'distribution_out', $distribution->id);
         $stock->add($cabang->id, $ingredient->id, 3, 'distribution_in', $distribution->id);
 
-        $this->assertEquals(7, Stock::query()->where('outlet_id', $pusat->id)->where('ingredient_id', $ingredient->id)->first()->quantity);
+        $this->assertEquals(7, Stock::query()->where('outlet_id', $warehouse->id)->where('ingredient_id', $ingredient->id)->first()->quantity);
         $this->assertEquals(3, Stock::query()->where('outlet_id', $cabang->id)->where('ingredient_id', $ingredient->id)->first()->quantity);
         $this->assertDatabaseHas('stock_movements', ['type' => 'distribution_out', 'reference' => $distribution->id, 'qty_out' => 3]);
         $this->assertDatabaseHas('stock_movements', ['type' => 'distribution_in', 'reference' => $distribution->id, 'qty_in' => 3]);

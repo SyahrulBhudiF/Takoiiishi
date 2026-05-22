@@ -2,9 +2,6 @@
 
 namespace App\Filament\Resources\Distributions\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use App\Support\DateFormat;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -29,6 +26,19 @@ class DistributionsTable
                 TextColumn::make('creator.name')
                     ->label('Dibuat oleh')
                     ->searchable(),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'completed' => 'Completed',
+                        'cancelled' => 'Dibatalkan',
+                        default => ucfirst($state),
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'completed' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    }),
                 TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime(DateFormat::DATE_TIME)

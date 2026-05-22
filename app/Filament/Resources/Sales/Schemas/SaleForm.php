@@ -20,7 +20,7 @@ class SaleForm
                     ->required(),
                 Select::make('outlet_id')
                     ->label('Outlet')
-                    ->relationship('outlet', 'name', fn ($query) => $query->where('type', 'cabang'))
+                    ->relationship('outlet', 'name', fn ($query) => $query->whereIn('type', ['pusat', 'cabang']))
                     ->default(fn () => UserRole::parse(auth()->user()?->role)?->isOutletScoped() ? auth()->user()->outlet_id : null)
                     ->disabled(fn (): bool => UserRole::parse(auth()->user()?->role)?->isOutletScoped() ?? false)
                     ->dehydrated()

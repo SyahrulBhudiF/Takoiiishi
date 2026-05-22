@@ -19,8 +19,8 @@ class DistributionForm
                     ->default(now())
                     ->required(),
                 Select::make('to_outlet_id')
-                    ->relationship('toOutlet', 'name', fn ($query) => $query->where('type', 'cabang'))
-                    ->label('Cabang Tujuan')
+                    ->relationship('toOutlet', 'name', fn ($query) => $query->whereIn('type', ['pusat', 'cabang']))
+                    ->label('Outlet Tujuan')
                     ->required(),
                 Repeater::make('items')
                     ->relationship()

@@ -20,7 +20,12 @@ class OutletsTable
                     ->searchable(),
                 TextColumn::make('type')
                     ->label('Tipe')
-                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'gudang' => 'Gudang',
+                        'pusat' => 'Pusat',
+                        'cabang' => 'Cabang',
+                        default => ucfirst($state),
+                    })
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Dibuat')

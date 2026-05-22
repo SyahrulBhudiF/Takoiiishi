@@ -33,14 +33,14 @@ class CreatePurchase extends CreateRecord
         unset($data['items']);
 
         $record = static::getModel()::query()->create($data);
-        $pusat = Outlet::pusat();
+        $warehouse = Outlet::warehouse();
 
         foreach ($items as $item) {
             $item['subtotal'] = ((float) $item['quantity']) * ((float) $item['price']);
             $record->items()->create($item);
 
             app(StockService::class)->add(
-                $pusat->id,
+                $warehouse->id,
                 $item['ingredient_id'],
                 (float) $item['quantity'],
                 'purchase_in',
