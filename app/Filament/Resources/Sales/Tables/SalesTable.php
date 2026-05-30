@@ -67,6 +67,9 @@ class SalesTable
             ->toolbarActions([
                 ExportAction::make()
                     ->exporter(SaleExporter::class)
+                    ->modifyQueryUsing(fn (Builder $query, array $options): Builder => $query
+                        ->when($options['from'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('sale_date', '>=', $date))
+                        ->when($options['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('sale_date', '<=', $date)))
                     ->formats([ExportFormat::Csv, ExportFormat::Xlsx])
                     ->fileName(fn () => 'laporan-penjualan-' . now()->format('Y-m-d-His')),
             ]);

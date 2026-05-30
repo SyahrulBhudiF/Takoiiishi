@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Purchases\Schemas;
 
+use App\Models\Ingredient;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -14,6 +15,20 @@ class PurchaseForm
     private static function updateItemSubtotal(callable $set, callable $get): void
     {
         $set('subtotal', ((float) $get('quantity')) * ((float) $get('price')));
+        self::updatePurchaseTotal($set, $get);
+    }
+
+    private static function updatePurchaseTotal(callable $set, callable $get): void
+    {
+        $items = $get('../../items') ?? [];
+        $total = collect($items)->sum(fn (array $item): float => ((float) ($item['quantity'] ?? 0)) * ((float) ($item['price'] ?? 0)));
+
+        $set('../../total', $total);
+    }
+
+    private static function ingredientUnit(?string $ingredientId): ?string
+    {
+        return filled($ingredientId) ? Ingredient::query()->find($ingredientId)?->unit : null;
     }
 
     public static function configure(Schema $schema): Schema
@@ -45,13 +60,19 @@ class PurchaseForm
                 Repeater::make('items')
                     ->label('Item Pembelian')
                     ->relationship()
+                    ->dehydrated()
+                    ->saveRelationshipsUsing(null)
                     ->schema([
                         Select::make('ingredient_id')
                             ->label('Bahan')
-                            ->relationship('ingredient', 'name')
-                            ->required(),
+                            ->options(fn (): array => Ingredient::query()->orderBy('name')->pluck('name', 'id')->all())
+                            ->searchable()
+                            ->required()
+                            ->live(),
                         TextInput::make('quantity')
                             ->label('Jumlah')
+                            ->suffix(fn (callable $get): ?string => self::ingredientUnit($get('ingredient_id')), true)
+                            ->helperText(fn (callable $get): string => filled(self::ingredientUnit($get('ingredient_id'))) ? 'Satuan: '.self::ingredientUnit($get('ingredient_id')) : 'Pilih bahan baku untuk melihat satuan.')
                             ->numeric()
                             ->required()
                             ->live(onBlur: true)

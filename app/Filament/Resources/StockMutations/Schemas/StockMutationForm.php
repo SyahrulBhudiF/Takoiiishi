@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\Distributions\Schemas;
+namespace App\Filament\Resources\StockMutations\Schemas;
 
+use App\Enums\UserRole;
 use App\Models\Ingredient;
-use App\Models\Outlet;
 use App\Models\Stock;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -11,42 +11,52 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class DistributionForm
+class StockMutationForm
 {
-    private static function stockHelperText(?string $ingredientId): string
+    private static function stockHelperText(?string $outletId, ?string $ingredientId): string
     {
-        if (blank($ingredientId)) {
-            return 'Pilih bahan untuk melihat stok gudang.';
+        if (blank($outletId) || blank($ingredientId)) {
+            return 'Pilih outlet asal dan bahan untuk melihat stok.';
         }
 
         $ingredient = Ingredient::query()->find($ingredientId);
-        $warehouse = Outlet::warehouse();
 
-        if (! $ingredient || ! $warehouse) {
-            return 'Stok gudang: 0';
+        if (! $ingredient) {
+            return 'Stok asal: 0';
         }
 
         $quantity = Stock::query()
-            ->where('outlet_id', $warehouse->id)
+            ->where('outlet_id', $outletId)
             ->where('ingredient_id', $ingredientId)
             ->value('quantity') ?? 0;
 
-        return 'Stok gudang: '.rtrim(rtrim(number_format((float) $quantity, 2, '.', ''), '0'), '.').' '.$ingredient->unit;
+        return 'Stok asal: '.rtrim(rtrim(number_format((float) $quantity, 2, '.', ''), '0'), '.').' '.$ingredient->unit;
     }
 
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                DatePicker::make('distribution_date')
-                    ->label('Tanggal Distribusi')
+                DatePicker::make('mutation_date')
+                    ->label('Tanggal Mutasi')
                     ->default(now())
                     ->required(),
+                Select::make('from_outlet_id')
+                    ->label('Outlet Asal')
+                    ->relationship('fromOutlet', 'name', fn ($query) => $query->whereIn('type', ['pusat', 'cabang']))
+                    ->default(fn () => UserRole::parse(auth()->user()?->role)?->isOutletScoped() ? auth()->user()->outlet_id : null)
+                    ->disabled(fn (): bool => UserRole::parse(auth()->user()?->role)?->isOutletScoped() ?? false)
+                    ->dehydrated()
+                    ->required()
+                    ->live(),
                 Select::make('to_outlet_id')
-                    ->relationship('toOutlet', 'name', fn ($query) => $query->whereIn('type', ['pusat', 'cabang']))
                     ->label('Outlet Tujuan')
-                    ->required(),
+                    ->relationship('toOutlet', 'name', fn ($query) => $query->whereIn('type', ['pusat', 'cabang']))
+                    ->required()
+                    ->different('from_outlet_id')
+                    ->live(),
                 Repeater::make('items')
+                    ->label('Item Mutasi')
                     ->relationship()
                     ->dehydrated()
                     ->saveRelationshipsUsing(null)
@@ -59,12 +69,13 @@ class DistributionForm
                             ->live(),
                         TextInput::make('quantity')
                             ->label('Jumlah')
-                            ->helperText(fn (callable $get): string => self::stockHelperText($get('ingredient_id')))
+                            ->helperText(fn (callable $get): string => self::stockHelperText($get('../../from_outlet_id'), $get('ingredient_id')))
                             ->numeric()
                             ->required()
                             ->minValue(0.01),
                     ])
                     ->columns(2)
+                    ->columnSpanFull()
                     ->minItems(1)
                     ->required(),
             ]);

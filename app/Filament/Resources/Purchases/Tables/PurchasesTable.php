@@ -11,6 +11,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -29,6 +30,7 @@ class PurchasesTable
                     ->searchable(),
                 TextColumn::make('total')
                     ->label('Total')
+                    ->getStateUsing(fn (Purchase $record): float => (float) $record->total ?: (float) $record->items()->sum('subtotal'))
                     ->money('IDR')
                     ->sortable(),
                 TextColumn::make('created_at')
@@ -59,7 +61,10 @@ class PurchasesTable
             ->toolbarActions([
                 ExportAction::make()
                     ->exporter(PurchaseExporter::class)
-                    ->modifyQueryUsing(fn (): Builder => PurchaseItem::query()->with(['purchase.creator', 'ingredient']))
+                    ->modifyQueryUsing(fn (array $options): Builder => PurchaseItem::query()
+                        ->with(['purchase.creator', 'ingredient'])
+                        ->when($options['from'] ?? null, fn (Builder $query, string $date): Builder => $query->whereHas('purchase', fn (Builder $query): Builder => $query->whereDate('purchase_date', '>=', $date)))
+                        ->when($options['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereHas('purchase', fn (Builder $query): Builder => $query->whereDate('purchase_date', '<=', $date))))
                     ->formats([ExportFormat::Csv, ExportFormat::Xlsx])
                     ->fileName(fn () => 'laporan-pembelian-detail-' . now()->format('Y-m-d-His')),
             ]);

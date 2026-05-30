@@ -24,52 +24,52 @@ class StockMovementPolicy
 
     public function create(AuthUser $authUser): bool
     {
-        return $authUser->can('Create:StockMovement');
+        return false;
     }
 
     public function update(AuthUser $authUser, StockMovement $stockMovement): bool
     {
-        return $authUser->can('Update:StockMovement');
+        return false;
     }
 
     public function delete(AuthUser $authUser, StockMovement $stockMovement): bool
     {
-        return $authUser->can('Delete:StockMovement');
+        return false;
     }
 
     public function deleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('DeleteAny:StockMovement');
+        return false;
     }
 
     public function restore(AuthUser $authUser, StockMovement $stockMovement): bool
     {
-        return $authUser->can('Restore:StockMovement');
+        return false;
     }
 
     public function forceDelete(AuthUser $authUser, StockMovement $stockMovement): bool
     {
-        return $authUser->can('ForceDelete:StockMovement');
+        return false;
     }
 
     public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('ForceDeleteAny:StockMovement');
+        return false;
     }
 
     public function restoreAny(AuthUser $authUser): bool
     {
-        return $authUser->can('RestoreAny:StockMovement');
+        return false;
     }
 
     public function replicate(AuthUser $authUser, StockMovement $stockMovement): bool
     {
-        return $authUser->can('Replicate:StockMovement');
+        return false;
     }
 
     public function reorder(AuthUser $authUser): bool
     {
-        return $authUser->can('Reorder:StockMovement');
+        return false;
     }
 
 }

@@ -22,10 +22,10 @@ class OutletForm
                 Select::make('type')
                     ->label('Tipe')
                     ->options([
-                        'gudang' => 'Gudang',
                         'pusat' => 'Pusat',
                         'cabang' => 'Cabang',
                     ])
+                    ->default('cabang')
                     ->required(),
             ]);
     }

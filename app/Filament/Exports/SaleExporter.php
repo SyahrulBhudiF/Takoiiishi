@@ -4,6 +4,7 @@ namespace App\Filament\Exports;
 
 use App\Models\Sale;
 use Filament\Actions\Exports\ExportColumn;
+use Filament\Forms\Components\DatePicker;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Support\Number;
@@ -11,6 +12,14 @@ use Illuminate\Support\Number;
 class SaleExporter extends Exporter
 {
     protected static ?string $model = Sale::class;
+
+    public static function getOptionsFormComponents(): array
+    {
+        return [
+            DatePicker::make('from')->label('Dari tanggal'),
+            DatePicker::make('until')->label('Sampai tanggal'),
+        ];
+    }
 
     public static function getColumns(): array
     {

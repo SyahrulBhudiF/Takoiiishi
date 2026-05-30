@@ -2,11 +2,8 @@
 
 namespace App\Filament\Resources\StockMovements;
 
-use App\Filament\Resources\StockMovements\Pages\CreateStockMovement;
-use App\Filament\Resources\StockMovements\Pages\EditStockMovement;
 use App\Filament\Resources\StockMovements\Pages\ListStockMovements;
 use App\Filament\Resources\StockMovements\Pages\ViewStockMovement;
-use App\Filament\Resources\StockMovements\Schemas\StockMovementForm;
 use App\Filament\Resources\StockMovements\Schemas\StockMovementInfolist;
 use App\Filament\Resources\StockMovements\Tables\StockMovementsTable;
 use App\Enums\UserRole;
@@ -22,17 +19,19 @@ class StockMovementResource extends Resource
 {
     protected static ?string $model = StockMovement::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsRightLeft;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
-    protected static ?string $navigationLabel = 'Mutasi Stok';
+    protected static ?string $navigationLabel = 'Riwayat Stok';
 
-    protected static ?string $modelLabel = 'Mutasi Stok';
+    protected static ?string $modelLabel = 'Riwayat Stok';
 
-    protected static ?string $pluralModelLabel = 'Mutasi Stok';
+    protected static ?string $pluralModelLabel = 'Riwayat Stok';
 
-    public static function form(Schema $schema): Schema
+    protected static ?int $navigationSort = 60;
+
+    public static function shouldRegisterNavigation(): bool
     {
-        return StockMovementForm::configure($schema);
+        return false;
     }
 
     public static function infolist(Schema $schema): Schema
@@ -58,6 +57,16 @@ class StockMovementResource extends Resource
     }
 
     public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return false;
+    }
+
+    public static function canDelete($record): bool
     {
         return false;
     }

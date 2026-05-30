@@ -10,7 +10,7 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $resources = ['Outlet', 'Ingredient', 'User', 'Stock', 'StockMovement', 'Purchase', 'Distribution', 'Sale'];
+        $resources = ['Outlet', 'Ingredient', 'User', 'Stock', 'StockMovement', 'Purchase', 'Distribution', 'StockMutation', 'Sale'];
         $actions = ['ViewAny', 'View', 'Create', 'Update', 'Delete', 'DeleteAny', 'Restore', 'ForceDelete', 'ForceDeleteAny', 'RestoreAny', 'Replicate', 'Reorder'];
 
         foreach ($resources as $resource) {
@@ -45,11 +45,11 @@ class PermissionSeeder extends Seeder
             ],
             'staff_gudang' => [
                 ...$this->resourcePermissions(['Ingredient', 'Purchase', 'Distribution'], $manageActions),
-                ...$this->resourcePermissions(['Stock', 'StockMovement', 'Sale'], $viewActions),
+                ...$this->resourcePermissions(['Stock', 'StockMovement', 'StockMutation', 'Sale'], $viewActions),
                 ...$widgetPermissions,
             ],
             'karyawan_outlet' => [
-                ...$this->resourcePermissions(['Sale'], $outletSaleActions),
+                ...$this->resourcePermissions(['Sale', 'StockMutation'], $outletSaleActions),
                 ...$this->resourcePermissions(['Stock', 'StockMovement'], $viewActions),
                 ...$widgetPermissions,
             ],

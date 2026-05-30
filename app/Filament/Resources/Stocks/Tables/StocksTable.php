@@ -79,6 +79,9 @@ class StocksTable
             ->toolbarActions([
                 ExportAction::make()
                     ->exporter(StockExporter::class)
+                    ->modifyQueryUsing(fn (Builder $query, array $options): Builder => $query
+                        ->when($options['from'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('stocks.updated_at', '>=', $date))
+                        ->when($options['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('stocks.updated_at', '<=', $date)))
                     ->formats([ExportFormat::Csv, ExportFormat::Xlsx])
                     ->fileName(fn () => 'laporan-stok-' . now()->format('Y-m-d-His')),
             ]);

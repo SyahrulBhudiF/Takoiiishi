@@ -24,11 +24,18 @@ class StockResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCircleStack;
 
-    protected static ?string $navigationLabel = 'Monitoring Stok';
+    protected static ?string $navigationLabel = 'Stok Outlet + Gudang';
 
-    protected static ?string $modelLabel = 'Monitoring Stok';
+    protected static ?string $modelLabel = 'Stok Outlet + Gudang';
 
-    protected static ?string $pluralModelLabel = 'Monitoring Stok';
+    protected static ?string $pluralModelLabel = 'Stok Outlet + Gudang';
+
+    protected static ?int $navigationSort = 70;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Schema $schema): Schema
     {
