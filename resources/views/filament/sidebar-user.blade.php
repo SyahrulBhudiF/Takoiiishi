@@ -19,7 +19,7 @@
             </div>
         @endif
 
-        <form action="{{ filament()->getLogoutUrl() }}" method="post">
+        <form action="{{ filament()->getLogoutUrl() }}" method="post" data-turbo="false">
             @csrf
 
             <button type="submit" class="takoyaki-sidebar-user__logout">

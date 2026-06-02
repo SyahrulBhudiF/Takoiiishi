@@ -6,11 +6,14 @@ use App\Enums\UserRole;
 use App\Filament\Exports\StockExporter;
 use App\Models\Stock;
 use App\Models\StockMovement;
+use App\Models\User;
 use App\Support\DateFormat;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -79,6 +82,11 @@ class MonitoringStock extends Page implements HasTable
         'mutation_reverse_out' => 'gray',
         'sale_out' => 'danger',
     ];
+
+    public function mount(): void
+    {
+        $this->syncLowWarehouseStockNotification();
+    }
 
     public function setActiveTab(string $tab): void
     {
@@ -149,7 +157,7 @@ class MonitoringStock extends Page implements HasTable
                     )),
                 Filter::make('low_stock')
                     ->label('Stok minimum')
-                    ->query(fn (Builder $query): Builder => $query->whereColumn('stocks.quantity', '<=', 'ingredients.minimum_stock')),
+                    ->query(fn (Builder $query): Builder => $query->whereColumn('stocks.quantity', '<', 'ingredients.minimum_stock')),
             ])
             ->modifyQueryUsing(fn (Builder $query): Builder => $query
                 ->join('ingredients', 'stocks.ingredient_id', '=', 'ingredients.id')
@@ -237,5 +245,70 @@ class MonitoringStock extends Page implements HasTable
     public function getMovementCount(): int
     {
         return $this->getStockMovementQuery()->count();
+    }
+
+    public function getLowWarehouseStockCount(): int
+    {
+        return $this->getLowWarehouseStocksQuery()->count();
+    }
+
+    public function getLowWarehouseStockSummary(): string
+    {
+        return $this->getLowWarehouseStocksQuery()
+            ->limit(5)
+            ->get()
+            ->map(fn (Stock $stock): string => "{$stock->outlet->name} - {$stock->ingredient->name}: {$stock->quantity} {$stock->ingredient->unit} (min {$stock->ingredient->minimum_stock})")
+            ->implode(', ');
+    }
+
+    private function syncLowWarehouseStockNotification(): void
+    {
+        $count = $this->getLowWarehouseStockCount();
+
+        if ($count === 0) {
+            return;
+        }
+
+        $title = 'Stok gudang menipis';
+        $summary = $this->getLowWarehouseStockSummary();
+        $more = $count > 5 ? " dan " . ($count - 5) . ' bahan lain' : '';
+
+        $users = User::query()
+            ->whereIn('role', [
+                UserRole::Owner->value,
+                UserRole::AdministratorSistem->value,
+                UserRole::StaffGudang->value,
+            ])
+            ->whereDoesntHave('notifications', fn (Builder $query): Builder => $query
+                ->whereNull('read_at')
+                ->where('data->title', $title))
+            ->get();
+
+        if ($users->isEmpty()) {
+            return;
+        }
+
+        Notification::make()
+            ->title($title)
+            ->body("{$summary}{$more}. Klik untuk lihat Monitoring Stok.")
+            ->danger()
+            ->actions([
+                Action::make('Lihat Monitoring Stok')
+                    ->url(static::getUrl(['activeTab' => 'current']))
+                    ->markAsRead(),
+            ])
+            ->sendToDatabase($users, isEventDispatched: true);
+    }
+
+    private function getLowWarehouseStocksQuery(): Builder
+    {
+        return Stock::query()
+            ->with(['ingredient', 'outlet'])
+            ->join('ingredients', 'stocks.ingredient_id', '=', 'ingredients.id')
+            ->join('outlets', 'stocks.outlet_id', '=', 'outlets.id')
+            ->where('outlets.type', 'gudang')
+            ->whereColumn('stocks.quantity', '<', 'ingredients.minimum_stock')
+            ->select('stocks.*')
+            ->orderBy('ingredients.name');
     }
 }

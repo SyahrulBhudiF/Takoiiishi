@@ -30,12 +30,7 @@ class UserForm
                     ->dehydrated(fn (?string $state): bool => filled($state)),
                 Select::make('role')
                     ->label('Role')
-                    ->options(fn (?\App\Models\User $record): array => collect(UserRole::options())
-                        ->when(
-                            UserRole::parse($record?->role) !== UserRole::Owner,
-                            fn ($options) => $options->except(UserRole::Owner->value),
-                        )
-                        ->all())
+                    ->options(UserRole::options())
                     ->live()
                     ->required(),
                 Select::make('outlet_id')
