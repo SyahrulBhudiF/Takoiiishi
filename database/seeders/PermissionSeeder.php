@@ -33,6 +33,7 @@ class PermissionSeeder extends Seeder
         $manageActions = ['ViewAny', 'View', 'Create', 'Update', 'Delete', 'DeleteAny'];
         $viewActions = ['ViewAny', 'View'];
         $createActions = ['ViewAny', 'View', 'Create'];
+        $saleActions = ['ViewAny', 'View', 'Create', 'Update'];
 
         $permissions = [
             'owner' => [
@@ -47,7 +48,7 @@ class PermissionSeeder extends Seeder
                 ...$widgetPermissions,
             ],
             'karyawan_outlet' => [
-                ...$this->resourcePermissions(['Sale'], $createActions),
+                ...$this->resourcePermissions(['Sale'], $saleActions),
                 ...$this->resourcePermissions(['Stock'], $viewActions),
             ],
         ];
